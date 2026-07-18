@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
-"""Verify the merged generator produces the SAME effective layout as the two
-original generators, by expanding both to concrete keycodes and diffing per
-layer / per position.  Only macro *names* changed; expansions must be identical.
+"""One-time migration check: confirm this merged generator produces the SAME
+effective layout as the two pre-merge generators, by expanding both to concrete
+keycodes and diffing per layer / per position.  Only macro *names* should differ;
+any intentional layout change (e.g. moving a key) shows up here as an expected diff.
 
-Run from the keyboards/ repo root.  Points at the original repos for the baseline.
+This needs the ORIGINAL per-board generators present.  They are not part of this
+repo — point at them with env vars (defaults match their original clone paths):
+
+    ZMK_SRC=/path/to/format_keymap.py QMK_SRC=/path/to/generate_keymap.py \\
+        python check_equivalence.py
+
+If the originals are gone (they were superseded by this repo), the check simply
+skips — its job was done at merge time.
 """
 
 import importlib.util
+import os
 import re
 import sys
 from pathlib import Path
@@ -14,8 +23,8 @@ from pathlib import Path
 from layout import engine, names
 from layout.layers import GRIDS, LAYER_ORDER, TOTEM_ONLY
 
-ORIG_ZMK = Path("/home/dev/zmk-config-totem/format_keymap.py")
-ORIG_QMK = Path("/home/dev/qmk-config-3w6/generate_keymap.py")
+ORIG_ZMK = Path(os.environ.get("ZMK_SRC", "/home/dev/zmk-config-totem/format_keymap.py"))
+ORIG_QMK = Path(os.environ.get("QMK_SRC", "/home/dev/qmk-config-3w6/generate_keymap.py"))
 
 
 def _load(path, modname):
@@ -144,6 +153,13 @@ def compare(kind, old, new):
 
 
 def main():
+    missing = [str(p) for p in (ORIG_ZMK, ORIG_QMK) if not p.exists()]
+    if missing:
+        print("Original generator(s) not found — skipping migration check:")
+        for m in missing:
+            print(f"  missing: {m}")
+        print("Set ZMK_SRC / QMK_SRC to the pre-merge generators to run it.")
+        return 0
     ok = True
     print("ZMK (Totem) equivalence:")
     ok &= compare("zmk", zmk_old_layers(), zmk_new_layers())

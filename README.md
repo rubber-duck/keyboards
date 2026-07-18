@@ -25,7 +25,7 @@ targets/
   qmk.py               # QMK boilerplate: enums, tmux table, RGB/OS-detection code
 totem/ , 3w6/          # self-contained, buildable board configs
 keymap-drawer/         # generated keymap.yaml (visualization definition)
-check_equivalence.py   # proves output matches the two original generators
+check_equivalence.py   # one-time migration check (needs the pre-merge generators)
 ```
 
 Every grid cell is a **canonical token** (`K_Q`, `HM_A`, `LT_SYM`, `SY_AT`,
@@ -44,11 +44,14 @@ Bluetooth layer; the 3w6 does not. This is the single knob `outer_keys`:
 ## Regenerate
 
 ```sh
-python generate.py all          # regenerate both keymaps
-python check_equivalence.py     # verify vs the original per-board generators
+python generate.py all          # regenerate both keymaps + the drawer YAML
 ```
 
 Run the generator after **any** layout edit — it is not wired into the build.
+
+`check_equivalence.py` was a one-time check that the merge preserved behavior,
+diffing this output against the pre-merge per-board generators. It needs those
+generators present (see the file header); it isn't part of the normal workflow.
 
 ## Visualize the layers
 
@@ -80,3 +83,20 @@ cd 3w6   && ./build.sh                        # QMK  (Docker)
   in a grid. Multi-key/tmux/Bluetooth behaviors also need their node (ZMK) or
   custom keycode (QMK) in the relevant `targets/` module.
 * **tmux macros** must stay aligned with `~/.tmux/keybindings.conf`.
+
+## Based on
+
+This repo unifies the keymaps for two existing keyboards; the board configs under
+`totem/` and `3w6/` are derived from their upstream projects:
+
+* **TOTEM** — 38-key column-staggered split by **GEIGEIGEIST**
+  ([hardware & build guide](https://github.com/GEIGEIGEIST/totem)), running
+  [ZMK](https://zmk.dev/). The `totem/` config started from GEIGEIGEIST's ZMK config.
+* **3w6 / 3w6 RGB** — 36-key split by **weteor**
+  ([hardware](https://github.com/weteor/3w6)); the 3w6 RGB variant is maintained by
+  **Keebart**, running [QMK](https://qmk.fm/) (`3w6_rgb`, © 2021 weteor).
+* Layer diagrams via [keymap-drawer](https://github.com/caksoylar/keymap-drawer)
+  by **caksoylar**.
+
+The layout itself (key placement, home-row mods, layers, tmux/editor macros) is
+my own.
