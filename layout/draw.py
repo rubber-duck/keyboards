@@ -1,0 +1,136 @@
+"""Visualization target — emit a keymap-drawer definition of all layers.
+
+keymap-drawer (https://github.com/caksoylar/keymap-drawer) turns a YAML keymap
+into an SVG diagram.  We render the shared layout as a split 3x5+3 (36-key) ortho
+board — the common core of both boards.  The Totem's two extra outer keys
+(`K_LSHFT` / `MO_BT`) are omitted since keymap-drawer's ortho layout has no outer
+column; they are noted in the YAML header comment.
+
+    python generate.py draw          # -> keymap-drawer/keymap.yaml
+    keymap draw keymap-drawer/keymap.yaml > keymap-drawer/keymap.svg
+"""
+
+from layout import engine
+from layout.layers import GRIDS, LAYER_ORDER, TOTEM_ONLY
+
+OUTPUT = "keymap-drawer/keymap.yaml"
+TARGET = "draw"
+
+# ── Legends: canonical token -> display legend (str, or {"t","h"} tap/hold) ────
+
+_PLAIN = {
+    "K_QUOTE": "'", "K_COMMA": ",", "K_DOT": ".", "K_SLASH": "/", "K_BSLASH": "\\",
+    "K_SEMI": ";", "K_MINUS": "-", "K_EQUAL": "=", "K_GRAVE": "`",
+    "K_LBKT": "[", "K_RBKT": "]",
+    "K_HOME": "Home", "K_END": "End", "K_PGUP": "PgUp", "K_PGDN": "PgDn",
+    "K_LEFT": "←", "K_DOWN": "↓", "K_UP": "↑", "K_RIGHT": "→",
+    "K_ESC": "Esc", "K_SPACE": "Spc", "K_TAB": "Tab", "K_ENTER": "Enter",
+    "K_BSPC": "Bksp", "K_DEL": "Del", "K_LSHFT": "Shift", "K_LGUI": "Gui",
+}
+
+_MODS = {  # home-row mods: tap letter / hold modifier
+    "HM_A": ("A", "Gui"), "HM_R": ("R", "Alt"), "HM_S": ("S", "Ctrl"), "HM_T": ("T", "Shift"),
+    "HM_N": ("N", "Shift"), "HM_E": ("E", "Ctrl"), "HM_I": ("I", "Alt"), "HM_O": ("O", "Gui"),
+}
+
+_LAYERTAPS = {  # tap key / hold layer
+    "LT_SHRT_PC": ("Esc", "Short"), "LT_BRKT_PC": ("Spc", "Brkt"), "LT_NAV_PC": ("Tab", "Nav"),
+    "LT_SHRT_MAC": ("Esc", "Short"), "LT_BRKT_MAC": ("Spc", "Brkt"), "LT_NAV_MAC": ("Tab", "Nav"),
+    "LT_NUM": ("Enter", "Num"), "LT_SYM": ("Bksp", "Sym"), "LT_FN": ("Del", "Fn"),
+    "LT_TMUX_L": ("G", "tmux"), "LT_TMUX_R": ("M", "tmux"),
+}
+
+_SYMBOLS = {
+    "SY_AT": "@", "SY_DLR": "$", "SY_HASH": "#", "SY_PERC": "%", "SY_ASTR": "*",
+    "SY_AMPR": "&", "SY_PIPE": "|", "SY_CRET": "^", "SY_TILD": "~", "SY_PLUS": "+",
+    "SY_UNDS": "_", "SY_QUES": "?", "SY_LABR": "<", "SY_RABR": ">", "SY_LCBR": "{",
+    "SY_RCBR": "}", "SY_LPRN": "(", "SY_RPRN": ")", "SY_CLN": ":", "SY_DQUO": '"',
+    "SY_EXCL": "!",
+}
+
+# editor/OS actions — shared by PC_* and MC_* (they mirror each other)
+_ACT = {
+    "UNDO": "undo", "CUT": "cut", "COPY": "copy", "PSTE": "paste", "REDO": "redo",
+    "GOBK": "nav back", "WDLF": "wrd ◂", "WDRT": "wrd ▸", "GTBR": "match {}",
+    "PRNT": "cmd P", "GTLN": "goto ln", "NVBK": "nav ◂", "NVFW": "nav ▸",
+    "SWFL": "switch", "CMDP": "palette", "SELA": "sel all", "SAVE": "save",
+    "DLWD": "del wrd ◂", "DLFW": "del wrd ▸", "DLLS": "del ln ◂", "DLLE": "del ln ▸",
+    "SCRN": "prt scr", "LCMT": "comment", "RPLA": "replace all", "FNDA": "find all",
+    "ZMIN": "zoom +", "SREG": "snip", "FMTD": "format", "RPLC": "replace",
+    "FIND": "find", "ZMOT": "zoom -", "SREC": "screenrec", "GDEF": "goto def",
+    "IMPL": "goto impl", "QFIX": "quickfix", "CTAB": "close tab",
+}
+
+_TMUX = {
+    "TM_W1": "1", "TM_W2": "2", "TM_W3": "3", "TM_W4": "4", "TM_W5": "5",
+    "TM_W6": "6", "TM_W7": "7", "TM_W8": "8", "TM_W9": "9", "TM_W0": "0",
+    "TM_NEW": "new", "TM_PREV": "prev", "TM_NEXT": "next", "TM_LAST": "last", "TM_TREE": "tree",
+    "TM_LEFT": "◂", "TM_DOWN": "▾", "TM_UP": "▴", "TM_RGHT": "▸",
+    "TM_SPLH": "split |", "TM_SPLV": "split —", "TM_ZOOM": "zoom", "TM_KILL": "kill",
+    "TM_RENM": "rename", "TM_DET": "detach",
+    "TM_RLFT": "rsz ◂", "TM_RDWN": "rsz ▾", "TM_RUP": "rsz ▴", "TM_RRGT": "rsz ▸",
+}
+
+_SWITCH = {"TO_PC": "⇒ PC", "TO_MAC": "⇒ Mac", "TO_GAME": "⇒ Game", "MO_BT": "BT"}
+
+_BT = {
+    "BT0_PC": "BT0 PC", "BT1_MAC": "BT1 Mac", "BT2": "BT2", "BT3": "BT3", "BT4": "BT4",
+    "BT_CLEAR": "BT clr", "OUT_TOGGLE": "out", "SYS_RST": "reset", "BOOTLDR": "boot",
+}
+
+_SPECIAL = {"TRANS": "▽", "NONE": ""}
+
+
+def legend(token):
+    """Return a legend string, or a {'t','h'} tap/hold mapping."""
+    if token in _MODS:
+        t, h = _MODS[token]
+        return {"t": t, "h": h}
+    if token in _LAYERTAPS:
+        t, h = _LAYERTAPS[token]
+        return {"t": t, "h": h}
+    for table in (_PLAIN, _SYMBOLS, _TMUX, _SWITCH, _BT, _SPECIAL):
+        if token in table:
+            return table[token]
+    if token[:3] in ("PC_", "MC_") and token[3:] in _ACT:
+        return _ACT[token[3:]]
+    if token.startswith("K_"):          # plain letters / digits / F-keys
+        return token[2:]
+    return token                        # fallback: raw token
+
+
+# ── YAML emission (no external deps) ──────────────────────────────────────────
+
+def _q(s):
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def _cell(token):
+    lg = legend(token)
+    if isinstance(lg, dict):
+        return "{t: %s, h: %s}" % (_q(lg["t"]), _q(lg["h"]))
+    return _q(lg)
+
+
+def render():
+    lines = [
+        "# keymap-drawer definition — generated by generate.py (do not edit by hand).",
+        "# Shared split 3x5+3 core of both boards. Totem-only outer keys omitted:",
+        "#   left home-row outer = Shift, right home-row outer = hold BT layer.",
+        "# Render:  keymap draw keymap-drawer/keymap.yaml > keymap-drawer/keymap.svg",
+        "layout:",
+        "  ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 3}",
+        "layers:",
+    ]
+    for key in LAYER_ORDER:
+        cells = [_cell(t) for t in engine.iter_cells(GRIDS[key], outer_keys=False)]
+        note = "   # Totem only" if key in TOTEM_ONLY else ""
+        lines.append(f"  {key}: [{note}")
+        # 3 alpha rows of 10, then the 6-key thumb row
+        for r in range(3):
+            row = cells[r * 10:(r + 1) * 10]
+            lines.append("    " + ", ".join(row[:5]) + ",   " + ", ".join(row[5:]) + ",")
+        thumbs = cells[30:36]
+        lines.append("    " + ", ".join(thumbs[:3]) + ",   " + ", ".join(thumbs[3:]))
+        lines.append("  ]")
+    return "\n".join(lines) + "\n"

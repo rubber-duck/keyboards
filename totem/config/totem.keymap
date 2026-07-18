@@ -1,0 +1,475 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+
+#define COLEMAK_PC 0
+#define COLEMAK_MAC 1
+#define QWERTY_GAMING 2
+#define SYMBOLS 3
+#define BRACKETS_PC 4
+#define BRACKETS_MAC 5
+#define NUMBERS 6
+#define NAVIGATION_PC 7
+#define NAVIGATION_MAC 8
+#define SHORTCUTS_PC 9
+#define SHORTCUTS_MAC 10
+#define TMUX 11
+#define FUNCTION 12
+#define BLUETOOTH 13
+
+// Plain keys
+#define K_A &kp A
+#define K_B &kp B
+#define K_C &kp C
+#define K_D &kp D
+#define K_E &kp E
+#define K_F &kp F
+#define K_G &kp G
+#define K_H &kp H
+#define K_I &kp I
+#define K_J &kp J
+#define K_K &kp K
+#define K_L &kp L
+#define K_M &kp M
+#define K_N &kp N
+#define K_O &kp O
+#define K_P &kp P
+#define K_Q &kp Q
+#define K_R &kp R
+#define K_S &kp S
+#define K_T &kp T
+#define K_U &kp U
+#define K_V &kp V
+#define K_W &kp W
+#define K_X &kp X
+#define K_Y &kp Y
+#define K_Z &kp Z
+#define K_1 &kp N1
+#define K_2 &kp N2
+#define K_3 &kp N3
+#define K_4 &kp N4
+#define K_5 &kp N5
+#define K_6 &kp N6
+#define K_7 &kp N7
+#define K_8 &kp N8
+#define K_9 &kp N9
+#define K_0 &kp N0
+#define K_F1 &kp F1
+#define K_F2 &kp F2
+#define K_F3 &kp F3
+#define K_F4 &kp F4
+#define K_F5 &kp F5
+#define K_F6 &kp F6
+#define K_F7 &kp F7
+#define K_F8 &kp F8
+#define K_F9 &kp F9
+#define K_F10 &kp F10
+#define K_F11 &kp F11
+#define K_F12 &kp F12
+#define K_QUOTE &kp SQT
+#define K_COMMA &kp COMMA
+#define K_DOT &kp DOT
+#define K_SLASH &kp FSLH
+#define K_BSLASH &kp BSLH
+#define K_SEMI &kp SEMI
+#define K_MINUS &kp MINUS
+#define K_EQUAL &kp EQUAL
+#define K_GRAVE &kp GRAVE
+#define K_LBKT &kp LBKT
+#define K_RBKT &kp RBKT
+#define K_HOME &kp HOME
+#define K_END &kp END
+#define K_PGUP &kp PG_UP
+#define K_PGDN &kp PG_DN
+#define K_LEFT &kp LEFT
+#define K_DOWN &kp DOWN
+#define K_UP &kp UP
+#define K_RIGHT &kp RIGHT
+#define K_ESC &kp ESC
+#define K_SPACE &kp SPACE
+#define K_TAB &kp TAB
+#define K_ENTER &kp RET
+#define K_BSPC &kp BSPC
+#define K_DEL &kp DEL
+#define K_LSHFT &kp LSHFT
+#define K_LGUI &kp LGUI
+
+// Home-row mods
+#define HM_A &mt LGUI A
+#define HM_R &mt LALT R
+#define HM_S &mt LCTRL S
+#define HM_T &mt LSHFT T
+#define HM_N &mt RSHFT N
+#define HM_E &mt RCTRL E
+#define HM_I &mt RALT I
+#define HM_O &mt RGUI O
+
+// Layer-taps
+#define LT_SHRT_PC &lt SHORTCUTS_PC ESC
+#define LT_BRKT_PC &lt BRACKETS_PC SPACE
+#define LT_NAV_PC &lt NAVIGATION_PC TAB
+#define LT_SHRT_MAC &lt SHORTCUTS_MAC ESC
+#define LT_BRKT_MAC &lt BRACKETS_MAC SPACE
+#define LT_NAV_MAC &lt NAVIGATION_MAC TAB
+#define LT_NUM &lt NUMBERS RET
+#define LT_SYM &lt SYMBOLS BSPC
+#define LT_FN &lt FUNCTION DEL
+#define LT_TMUX_L &lt TMUX G
+#define LT_TMUX_R &lt TMUX M
+
+// Shifted symbols
+#define SY_AT &kp LS(N2)
+#define SY_DLR &kp LS(N4)
+#define SY_HASH &kp LS(N3)
+#define SY_PERC &kp LS(N5)
+#define SY_ASTR &kp LS(N8)
+#define SY_AMPR &kp LS(N7)
+#define SY_PIPE &kp LS(BSLH)
+#define SY_CRET &kp LS(N6)
+#define SY_TILD &kp LS(GRAVE)
+#define SY_PLUS &kp LS(EQUAL)
+#define SY_UNDS &kp LS(MINUS)
+#define SY_QUES &kp LS(FSLH)
+#define SY_LABR &kp LS(COMMA)
+#define SY_RABR &kp LS(DOT)
+#define SY_LCBR &kp LS(LBKT)
+#define SY_RCBR &kp LS(RBKT)
+#define SY_LPRN &kp LS(N9)
+#define SY_RPRN &kp LS(N0)
+#define SY_CLN &kp LS(SEMI)
+#define SY_DQUO &kp LS(SQT)
+#define SY_EXCL &kp LS(N1)
+
+// PC actions
+#define PC_UNDO &kp LC(Z)
+#define PC_CUT &kp LC(X)
+#define PC_COPY &kp LC(C)
+#define PC_PSTE &kp LC(V)
+#define PC_REDO &kp LC(LS(Z))
+#define PC_GOBK &kp LA(LEFT)
+#define PC_WDLF &kp LC(LEFT)
+#define PC_WDRT &kp LC(RIGHT)
+#define PC_GTBR &kp LC(LS(BSLH))
+#define PC_PRNT &kp LC(P)
+#define PC_GTLN &kp LC(G)
+#define PC_NVBK &kp LC(MINUS)
+#define PC_NVFW &kp LC(EQUAL)
+#define PC_SWFL &kp LC(LS(O))
+#define PC_CMDP &kp LC(LS(P))
+#define PC_SELA &kp LC(A)
+#define PC_SAVE &kp LC(S)
+#define PC_DLWD &kp LC(BSPC)
+#define PC_DLFW &kp LC(DEL)
+#define PC_DLLS &pc_dlls
+#define PC_DLLE &pc_dlle
+#define PC_SCRN &kp PSCRN
+#define PC_LCMT &kp LC(FSLH)
+#define PC_RPLA &kp LC(LS(H))
+#define PC_FNDA &kp LC(LS(F))
+#define PC_ZMIN &kp LC(LS(EQUAL))
+#define PC_SREG &kp LG(LS(S))
+#define PC_FMTD &kp LS(LA(F))
+#define PC_RPLC &kp LC(H)
+#define PC_FIND &kp LC(F)
+#define PC_ZMOT &kp LC(MINUS)
+#define PC_SREC &kp LG(LA(R))
+#define PC_GDEF &kp F12
+#define PC_IMPL &kp LC(F12)
+#define PC_QFIX &kp LC(DOT)
+#define PC_CTAB &kp LC(W)
+
+// Mac actions
+#define MC_UNDO &kp LG(Z)
+#define MC_CUT &kp LG(X)
+#define MC_COPY &kp LG(C)
+#define MC_PSTE &kp LG(V)
+#define MC_REDO &kp LG(LS(Z))
+#define MC_GOBK &kp LC(MINUS)
+#define MC_WDLF &kp LA(LEFT)
+#define MC_WDRT &kp LA(RIGHT)
+#define MC_GTBR &kp LG(LS(BSLH))
+#define MC_PRNT &kp LG(P)
+#define MC_GTLN &kp LC(G)
+#define MC_NVBK &kp LG(MINUS)
+#define MC_NVFW &kp LG(EQUAL)
+#define MC_SWFL &kp LG(LS(O))
+#define MC_CMDP &kp LG(LS(P))
+#define MC_SELA &kp LG(A)
+#define MC_SAVE &kp LG(S)
+#define MC_DLWD &kp LA(BSPC)
+#define MC_DLFW &kp LA(DEL)
+#define MC_DLLS &kp LG(BSPC)
+#define MC_DLLE &kp LC(K)
+#define MC_SCRN &kp LG(LS(N3))
+#define MC_LCMT &kp LG(FSLH)
+#define MC_RPLA &kp LG(LS(H))
+#define MC_FNDA &kp LG(LS(F))
+#define MC_ZMIN &kp LG(LS(EQUAL))
+#define MC_SREG &kp LG(LS(N4))
+#define MC_FMTD &kp LS(LA(F))
+#define MC_RPLC &kp LG(LA(F))
+#define MC_FIND &kp LG(F)
+#define MC_ZMOT &kp LG(MINUS)
+#define MC_SREC &kp LG(LS(N5))
+#define MC_GDEF &kp F12
+#define MC_IMPL &kp LG(F12)
+#define MC_QFIX &kp LG(DOT)
+#define MC_CTAB &kp LG(W)
+
+// tmux macros
+#define TM_W1 &tm_w1
+#define TM_W2 &tm_w2
+#define TM_W3 &tm_w3
+#define TM_W4 &tm_w4
+#define TM_W5 &tm_w5
+#define TM_W6 &tm_w6
+#define TM_W7 &tm_w7
+#define TM_W8 &tm_w8
+#define TM_W9 &tm_w9
+#define TM_W0 &tm_w0
+#define TM_NEW &tm_new
+#define TM_PREV &tm_prev
+#define TM_NEXT &tm_next
+#define TM_LAST &tm_last
+#define TM_TREE &tm_tree
+#define TM_LEFT &tm_left
+#define TM_DOWN &tm_down
+#define TM_UP &tm_up
+#define TM_RGHT &tm_right
+#define TM_SPLH &tm_splh
+#define TM_SPLV &tm_splv
+#define TM_ZOOM &tm_zoom
+#define TM_KILL &tm_kill
+#define TM_RENM &tm_renm
+#define TM_DET &tm_det
+#define TM_RLFT &tm_rlft
+#define TM_RDWN &tm_rdwn
+#define TM_RUP &tm_rup
+#define TM_RRGT &tm_rrgt
+
+// Base-layer switches
+#define TO_PC &to COLEMAK_PC
+#define TO_MAC &to COLEMAK_MAC
+#define TO_GAME &to QWERTY_GAMING
+#define MO_BT &mo BLUETOOTH
+
+// Bluetooth (Totem)
+#define BT0_PC &bt0_pc
+#define BT1_MAC &bt1_mac
+#define BT2 &bt2
+#define BT3 &bt3
+#define BT4 &bt4
+#define BT_CLEAR &bt BT_CLR
+#define OUT_TOGGLE &out OUT_TOG
+#define SYS_RST &sys_reset
+#define BOOTLDR &bootloader
+
+// Special
+#define TRANS &trans
+#define NONE &none
+
+&mt {
+  quick-tap-ms = <100>;
+  global-quick-tap;
+  flavor = "tap-preferred";
+  tapping-term-ms = <170>;
+};
+
+/ {
+        macros {
+                // BT profile macros
+                bt0_pc: bt0_pc {
+                        compatible = "zmk,behavior-macro";
+                        #binding-cells = <0>;
+                        bindings = <&bt BT_SEL 0>, <&to COLEMAK_PC>;
+                };
+                bt1_mac: bt1_mac {
+                        compatible = "zmk,behavior-macro";
+                        #binding-cells = <0>;
+                        bindings = <&bt BT_SEL 1>, <&to COLEMAK_MAC>;
+                };
+                bt2: bt2 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&bt BT_SEL 2>; };
+                bt3: bt3 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&bt BT_SEL 3>; };
+                bt4: bt4 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&bt BT_SEL 4>; };
+
+                // Multi-step delete to line start/end macros
+                pc_dlls: pc_dlls { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LS(HOME)>, <&kp BSPC>; };
+                pc_dlle: pc_dlle { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LS(END)>, <&kp DEL>; };
+
+                // tmux prefix macros. Keep these aligned with ~/.tmux/keybindings.conf.
+                tm_w1: tm_w1 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N1>; };
+                tm_w2: tm_w2 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N2>; };
+                tm_w3: tm_w3 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N3>; };
+                tm_w4: tm_w4 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N4>; };
+                tm_w5: tm_w5 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N5>; };
+                tm_w6: tm_w6 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N6>; };
+                tm_w7: tm_w7 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N7>; };
+                tm_w8: tm_w8 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N8>; };
+                tm_w9: tm_w9 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N9>; };
+                tm_w0: tm_w0 { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N0>; };
+                tm_new: tm_new { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp C>; };
+                tm_prev: tm_prev { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp P>; };
+                tm_next: tm_next { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp N>; };
+                tm_last: tm_last { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp L>; };
+                tm_tree: tm_tree { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp W>; };
+                tm_left: tm_left { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp LEFT>; };
+                tm_down: tm_down { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp DOWN>; };
+                tm_up: tm_up { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp UP>; };
+                tm_right: tm_right { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp RIGHT>; };
+                tm_splh: tm_splh { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp H>; };
+                tm_splv: tm_splv { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp V>; };
+                tm_zoom: tm_zoom { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp Z>; };
+                tm_kill: tm_kill { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp X>; };
+                tm_renm: tm_renm { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp COMMA>; };
+                tm_det: tm_det { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp D>; };
+                tm_rlft: tm_rlft { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp LS(H)>; };
+                tm_rdwn: tm_rdwn { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp LS(J)>; };
+                tm_rup: tm_rup { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp LS(K)>; };
+                tm_rrgt: tm_rrgt { compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&kp LC(A)>, <&kp LS(L)>; };
+        };
+
+        keymap {
+                compatible = "zmk,keymap";
+
+                colemak_pc_layer {
+label= "COLEMAK PC";
+bindings = <
+         K_Q   K_W   K_F   K_P         K_B                                K_J        K_L    K_U      K_Y    K_QUOTE
+         HM_A  HM_R  HM_S  HM_T        LT_TMUX_L                          LT_TMUX_R  HM_N   HM_E     HM_I   HM_O
+K_LSHFT  K_Z   K_X   K_C   K_D         K_V                                K_K        K_H    K_COMMA  K_DOT  K_SLASH  MO_BT
+                           LT_SHRT_PC  LT_BRKT_PC  LT_NAV_PC      LT_NUM  LT_SYM     LT_FN
+>;
+                };
+
+                colemak_mac_layer {
+label= "COLEMAK MAC";
+bindings = <
+         K_Q   K_W   K_F   K_P          K_B                                  K_J        K_L    K_U      K_Y    K_QUOTE
+         HM_A  HM_R  HM_S  HM_T         LT_TMUX_L                            LT_TMUX_R  HM_N   HM_E     HM_I   HM_O
+K_LSHFT  K_Z   K_X   K_C   K_D          K_V                                  K_K        K_H    K_COMMA  K_DOT  K_SLASH  MO_BT
+                           LT_SHRT_MAC  LT_BRKT_MAC  LT_NAV_MAC      LT_NUM  LT_SYM     LT_FN
+>;
+                };
+
+                qwerty_gaming_layer {
+label= "QWERTY GAMING";
+bindings = <
+        K_Q  K_W  K_E  K_R    K_T                          K_Y     K_U    K_I      K_O    K_P
+        K_A  K_S  K_D  K_F    K_G                          K_H     K_J    K_K      K_L    K_SEMI
+K_LGUI  K_Z  K_X  K_C  K_V    K_B                          K_N     K_M    K_COMMA  K_DOT  K_SLASH  MO_BT
+                       K_ESC  K_SPACE  K_TAB      K_ENTER  K_BSPC  K_DEL
+>;
+                };
+
+                symbols_layer {
+label= "SYMBOLS";
+bindings = <
+       SY_AT    SY_DLR   SY_HASH  SY_PERC   SY_ASTR                  SY_ASTR  SY_PERC   SY_HASH  SY_DLR   SY_AT
+       SY_AMPR  SY_PIPE  SY_CRET  K_BSLASH  K_SLASH                  K_SLASH  K_BSLASH  SY_CRET  SY_PIPE  SY_AMPR
+TRANS  SY_TILD  SY_PLUS  K_MINUS  SY_UNDS   SY_QUES                  SY_QUES  SY_UNDS   K_MINUS  SY_PLUS  SY_TILD  TRANS
+                                  NONE      NONE     NONE      NONE  NONE     NONE
+>;
+                };
+
+                brackets_pc_layer {
+label= "BRACKETS PC";
+bindings = <
+       K_LBKT   K_RBKT   SY_LABR  SY_RABR  SY_CLN                   SY_CLN   SY_LABR  SY_RABR  K_LBKT   K_RBKT
+       SY_LCBR  SY_RCBR  SY_LPRN  SY_RPRN  K_SEMI                   K_SEMI   SY_LPRN  SY_RPRN  SY_LCBR  SY_RCBR
+TRANS  K_GRAVE  K_QUOTE  SY_DQUO  SY_EXCL  K_EQUAL                  K_EQUAL  SY_EXCL  SY_DQUO  K_QUOTE  K_GRAVE  TRANS
+                                  NONE     NONE     NONE      NONE  PC_DLWD  PC_DLFW
+>;
+                };
+
+                brackets_mac_layer {
+label= "BRACKETS MAC";
+bindings = <
+       K_LBKT   K_RBKT   SY_LABR  SY_RABR  SY_CLN                   SY_CLN   SY_LABR  SY_RABR  K_LBKT   K_RBKT
+       SY_LCBR  SY_RCBR  SY_LPRN  SY_RPRN  K_SEMI                   K_SEMI   SY_LPRN  SY_RPRN  SY_LCBR  SY_RCBR
+TRANS  K_GRAVE  K_QUOTE  SY_DQUO  SY_EXCL  K_EQUAL                  K_EQUAL  SY_EXCL  SY_DQUO  K_QUOTE  K_GRAVE  TRANS
+                                  NONE     NONE     NONE      NONE  MC_DLWD  MC_DLFW
+>;
+                };
+
+                numbers_layer {
+label= "NUMBERS";
+bindings = <
+       SY_ASTR  K_9  K_8  K_7      SY_PLUS                     SY_PLUS  K_7      K_8  K_9  SY_ASTR
+       K_SLASH  K_6  K_5  K_4      K_MINUS                     K_MINUS  K_4      K_5  K_6  K_SLASH
+TRANS  K_0      K_3  K_2  K_1      K_EQUAL                     K_EQUAL  K_1      K_2  K_3  K_0      TRANS
+                          K_COMMA  K_DOT    K_ENTER      NONE  K_DOT    K_COMMA
+>;
+                };
+
+                navigation_pc_layer {
+label= "NAVIGATION PC";
+bindings = <
+       PC_UNDO  PC_CUT   PC_COPY  PC_PSTE  PC_REDO                  PC_GOBK  PC_WDLF  PC_GTBR  PC_GTBR  PC_WDRT
+       K_HOME   K_PGDN   K_PGUP   K_END    PC_PRNT                  PC_PRNT  K_LEFT   K_DOWN   K_UP     K_RIGHT
+TRANS  PC_GTLN  PC_NVBK  PC_NVFW  PC_SWFL  PC_CMDP                  PC_CMDP  PC_SWFL  PC_NVFW  PC_NVBK  PC_GTLN  TRANS
+                                  PC_SELA  PC_SAVE  NONE      NONE  PC_DLLS  PC_DLLE
+>;
+                };
+
+                navigation_mac_layer {
+label= "NAVIGATION MAC";
+bindings = <
+       MC_UNDO  MC_CUT   MC_COPY  MC_PSTE  MC_REDO                  MC_GOBK  MC_WDLF  MC_GTBR  MC_GTBR  MC_WDRT
+       K_HOME   K_PGDN   K_PGUP   K_END    MC_PRNT                  MC_PRNT  K_LEFT   K_DOWN   K_UP     K_RIGHT
+TRANS  MC_GTLN  MC_NVBK  MC_NVFW  MC_SWFL  MC_CMDP                  MC_CMDP  MC_SWFL  MC_NVFW  MC_NVBK  MC_GTLN  TRANS
+                                  MC_SELA  MC_SAVE  NONE      NONE  MC_DLLS  MC_DLLE
+>;
+                };
+
+                shortcuts_pc_layer {
+label= "SHORTCUTS PC";
+bindings = <
+       PC_SCRN  PC_LCMT  PC_RPLA  PC_FNDA  PC_ZMIN                    PC_ZMIN  PC_FNDA  PC_RPLA  PC_LCMT  PC_SCRN
+       PC_SREG  PC_FMTD  PC_RPLC  PC_FIND  PC_ZMOT                    PC_ZMOT  PC_FIND  PC_RPLC  PC_FMTD  PC_SREG
+TRANS  PC_SREC  PC_GDEF  PC_IMPL  PC_QFIX  PC_CTAB                    PC_CTAB  PC_QFIX  PC_IMPL  PC_GDEF  PC_SREC  TRANS
+                                  TRANS    TRANS    TRANS      TRANS  TRANS    TRANS
+>;
+                };
+
+                shortcuts_mac_layer {
+label= "SHORTCUTS MAC";
+bindings = <
+       MC_SCRN  MC_LCMT  MC_RPLA  MC_FNDA  MC_ZMIN                    MC_ZMIN  MC_FNDA  MC_RPLA  MC_LCMT  MC_SCRN
+       MC_SREG  MC_FMTD  MC_RPLC  MC_FIND  MC_ZMOT                    MC_ZMOT  MC_FIND  MC_RPLC  MC_FMTD  MC_SREG
+TRANS  MC_SREC  MC_GDEF  MC_IMPL  MC_QFIX  MC_CTAB                    MC_CTAB  MC_QFIX  MC_IMPL  MC_GDEF  MC_SREC  TRANS
+                                  TRANS    TRANS    TRANS      TRANS  TRANS    TRANS
+>;
+                };
+
+                tmux_layer {
+label= "TMUX";
+bindings = <
+       TM_W1    TM_W2    TM_W3    TM_W4    TM_W5                      TM_W6    TM_W7    TM_W8    TM_W9   TM_W0
+       TM_NEW   TM_PREV  TM_NEXT  TM_LAST  TM_TREE                    TM_TREE  TM_LEFT  TM_DOWN  TM_UP   TM_RGHT
+TRANS  TM_SPLH  TM_SPLV  TM_ZOOM  TM_KILL  TM_RENM                    TM_DET   TM_RLFT  TM_RDWN  TM_RUP  TM_RRGT  TRANS
+                                  TRANS    TRANS    TRANS      TRANS  TRANS    TRANS
+>;
+                };
+
+                function_layer {
+label= "FUNCTION";
+bindings = <
+       TO_PC    K_F9  K_F8  K_F7  K_F10                  K_F10  K_F7  K_F8  K_F9  TO_PC
+       TO_MAC   K_F6  K_F5  K_F4  K_F11                  K_F11  K_F4  K_F5  K_F6  TO_MAC
+TRANS  TO_GAME  K_F3  K_F2  K_F1  K_F12                  K_F12  K_F1  K_F2  K_F3  TO_GAME  TRANS
+                            NONE  NONE   NONE      NONE  NONE   NONE
+>;
+                };
+
+                bluetooth_layer {
+label= "BLUETOOTH";
+bindings = <
+       BT0_PC    BT1_MAC     BT2      BT3      BT4                      TRANS  TRANS  TRANS  TRANS  TO_PC
+       TRANS     TRANS       TRANS    TRANS    TRANS                    TRANS  TRANS  TRANS  TRANS  TO_MAC
+TRANS  BT_CLEAR  OUT_TOGGLE  SYS_RST  BOOTLDR  TRANS                    TRANS  TRANS  TRANS  TRANS  TO_GAME  TRANS
+                                      TRANS    TRANS  TRANS      TRANS  TRANS  TRANS
+>;
+                };
+        };
+};

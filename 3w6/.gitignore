@@ -1,0 +1,5 @@
+# Ignore firmware build directory
+/firmware/
+
+# MacOS specific files
+.DS_Store
