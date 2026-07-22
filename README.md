@@ -64,6 +64,10 @@ pipx install keymap-drawer          # or: pip install keymap-drawer
 keymap draw keymap-drawer/keymap.yaml > keymap-drawer/keymap.svg
 ```
 
+The current render ([`keymap-drawer/keymap.svg`](keymap-drawer/keymap.svg)):
+
+![Keymap layers](keymap-drawer/keymap.svg)
+
 The Totem's two extra outer keys (home-row Shift and hold-for-Bluetooth) aren't in
 the ortho drawing — noted at the top of the YAML.
 
