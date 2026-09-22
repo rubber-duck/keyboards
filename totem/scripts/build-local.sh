@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+python3 "$repo_root/../generate.py" totem
 build_yaml="${BUILD_YAML:-$repo_root/build.yaml}"
 config_dir="${CONFIG_DIR:-$repo_root/config}"
 workspace="${ZMK_LOCAL_WORKSPACE:-$repo_root/.build/zmk}"

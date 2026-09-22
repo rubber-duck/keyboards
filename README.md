@@ -25,7 +25,8 @@ targets/
   qmk.py               # QMK boilerplate: enums, tmux table, RGB/OS-detection code
 totem/ , 3w6/          # self-contained, buildable board configs
 keymap-drawer/         # generated keymap.yaml (visualization definition)
-check_equivalence.py   # one-time migration check (needs the pre-merge generators)
+check_equivalence.py   # optional migration check (needs the pre-merge generators)
+.github/workflows/    # QMK + ZMK builds and generated-layout checks
 ```
 
 Every grid cell is a **canonical token** (`K_Q`, `HM_A`, `LT_SYM`, `SY_AT`,
@@ -47,11 +48,20 @@ Bluetooth layer; the 3w6 does not. This is the single knob `outer_keys`:
 python generate.py all          # regenerate both keymaps + the drawer YAML
 ```
 
-Run the generator after **any** layout edit — it is not wired into the build.
+Local build scripts regenerate their board's keymap before compiling. After a
+layout edit, run `python generate.py all` to also update the other board and the
+drawer YAML before committing. CI rejects missing or stale generated files:
 
-`check_equivalence.py` was a one-time check that the merge preserved behavior,
-diffing this output against the pre-merge per-board generators. It needs those
-generators present (see the file header); it isn't part of the normal workflow.
+```sh
+python generate.py all --check   # read-only freshness check
+python -m unittest discover -s tests
+```
+
+`check_equivalence.py` optionally compares against the pre-merge generators. It
+accepts the intentional change from holding **B/J** to holding **G/M** for tmux
+on both Colemak layers, keeping the holds on the home row; all other binding
+differences fail. It needs the original generators (see its file header) and is
+not needed for generation, tests, or firmware builds.
 
 ## Visualize the layers
 
@@ -68,8 +78,21 @@ The current render ([`keymap-drawer/keymap.svg`](keymap-drawer/keymap.svg)):
 
 ![Keymap layers](keymap-drawer/keymap.svg)
 
-The Totem's two extra outer keys (home-row Shift and hold-for-Bluetooth) aren't in
-the ortho drawing — noted at the top of the YAML.
+The Totem's two extra outer keys sit beside the **bottom letter row**: Shift on
+the left (GUI in Gaming), hold-for-Bluetooth on the right. They aren't in the
+ortho drawing — noted at the top of the YAML.
+
+### Printable cheatsheet
+
+[`keymap-drawer/cheatsheet.png`](keymap-drawer/cheatsheet.png) is an imagegen-created
+reference for the shared layout, with PC/Mac action panels combined and the
+Totem Bluetooth layer included. The exact generation prompt is saved in
+[`cheatsheet-prompt.txt`](keymap-drawer/cheatsheet-prompt.txt), with its targeted
+correction in [`cheatsheet-edit-prompt.txt`](keymap-drawer/cheatsheet-edit-prompt.txt).
+This image is a snapshot; regenerate it after layout changes. The generated
+YAML/SVG remains the per-layer reference.
+
+![Keyboard cheatsheet](keymap-drawer/cheatsheet.png)
 
 ## Build
 
@@ -77,6 +100,31 @@ the ortho drawing — noted at the top of the YAML.
 cd totem && bash scripts/build-local.sh      # ZMK  (Docker)
 cd 3w6   && ./build.sh                        # QMK  (Docker)
 ```
+
+The local scripts need Python 3 and Docker (Totem also supports Podman), and can
+also be invoked by path from the repository root. On Windows, use
+`3w6/build.ps1` with Python and Docker available. Artifacts go to
+`totem/firmware/` and `3w6/firmware/`.
+
+GitHub Actions workflows live at the repository root:
+
+* [Build QMK firmware](.github/workflows/build-qmk.yml) builds 3w6 and uploads
+  `3w6-firmware` containing `3w6_rgb_default.uf2`.
+* [Build ZMK firmware](.github/workflows/build-zmk.yml) reads `totem/build.yaml`
+  and `totem/config`, builds both halves, and uploads `totem-firmware` containing
+  `totem_left-xiao_ble-zmk.uf2` and `totem_right-xiao_ble-zmk.uf2`.
+
+Both run on pushes, pull requests, and manual dispatch, and check generated files
+and layout tests before compilation. Firmware builds use upstream QMK and ZMK;
+the retired configuration repositories are not required. Upstream revisions and
+container tags currently track their moving defaults, so builds are not pinned.
+
+### Switching base layouts
+
+From Colemak, hold Delete for the Function layer, then choose PC, Mac, or Game.
+The 3w6 also selects PC/Mac automatically on host detection. Gaming uses plain
+keys without layer holds: on 3w6, reconnect the keyboard to return to the detected
+PC/Mac base; on Totem, hold the right outer Bluetooth key and choose PC or Mac.
 
 ## Editing the layout
 

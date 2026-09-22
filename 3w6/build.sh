@@ -1,6 +1,10 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 "$repo_root/../generate.py" 3w6
+cd "$repo_root"
 
 mkdir -p firmware
 docker build -t qmk-builder .

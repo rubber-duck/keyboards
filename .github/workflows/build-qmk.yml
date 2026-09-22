@@ -1,5 +1,12 @@
 name: Build QMK firmware
-on: [push, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qmk-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,8 +29,16 @@ jobs:
         with:
           path: ./config/
 
+      - name: Check generated keymaps
+        working-directory: ./config/
+        run: python3 generate.py all --check
+
+      - name: Test layout checks
+        working-directory: ./config/
+        run: python3 -m unittest discover -s tests
+
       - name: Copy keyboard to QMK keyboards folder
-        run: cp -r ./config/3w6_rgb ./qmk_firmware/keyboards/3w6_rgb
+        run: cp -r ./config/3w6/3w6_rgb ./qmk_firmware/keyboards/3w6_rgb
 
       - name: Build firmware
         working-directory: ./qmk_firmware/
@@ -31,8 +46,8 @@ jobs:
 
       - name: Archive firmware
         uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
-          name: firmware
+          name: 3w6-firmware
+          if-no-files-found: error
           path: |
             ./qmk_firmware/3w6_rgb_default.uf2

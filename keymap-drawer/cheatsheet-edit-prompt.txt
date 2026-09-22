@@ -1,0 +1,5 @@
+Use case: precise-object-edit
+Image 1 is the edit target: a nearly finished split keyboard cheatsheet.
+Correct ONE key label only, preserving every other key, caption, panel, geometry, and the overall style.
+In the FUNCTION panel near the lower left, look at the third letter row (the row starting with "→ Game"). The RIGHT half currently repeats F12. Its five keys must read, left-to-right, exactly: "F12", "F1", "F2", "F3", "→ Game". Change the SECOND key of this right half from "F12" to "F1". Keep the first key "F12". Do not change the left half, which is already "→ Game", "F3", "F2", "F1", "F12".
+Keep the rest of the poster identical. If possible render at higher resolution to improve the small text, but do not change any layout or other wording.

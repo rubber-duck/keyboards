@@ -1,0 +1,79 @@
+Use case: infographic-diagram
+Asset type: printable keyboard layout cheatsheet, a single high-resolution portrait image.
+Primary request: Create a beautifully clear reference poster for this actual custom Colemak split keyboard layout, shared by TOTEM (38 keys, ZMK) and 3w6 (36 keys, QMK). Exact key positions and labels matter more than decoration. Use a large portrait canvas, ideally 2160 x 3840 pixels. Editorial technical manual aesthetic, warm white paper, near-black text, thin key outlines, restrained teal and amber accents, no photography or 3D perspective.
+
+Title: "SPLIT KEYBOARD / CHEATSHEET"
+Subtitle: "Colemak · TOTEM + 3w6"
+Composition: one large full-width BASE panel at the top, followed by a crisp two-column grid containing eight compact layer panels: SYMBOLS / BRACKETS, NUMBERS / NAVIGATION, SHORTCUTS / TMUX, FUNCTION / GAMING. Finish with a full-width compact BLUETOOTH panel and a short legend. Exactly ten keyboard panels overall. PC and Mac versions share the displayed action positions and are intentionally combined. Include all the data below. Avoid duplicating sections or omitting keys.
+
+Each panel is a flat split keyboard diagram: three rows of exactly five keys on the left and five keys on the right, separated by a visible central gap; below them, exactly three left thumbs and three right thumbs. Rows are written left-to-right as JSON arrays. Do not reverse either half. Every array entry is one key. Draw blank keys for "—" (disabled); draw a small ▽ for transparent keys. For BASE entries written "tap / hold", show the tap label large and hold label small underneath on the SAME key. Other slashes inside strings are literal. Highlight G / tmux and M / tmux in amber. Never put tmux on B or J.
+
+BASE · PC / MAC
+Row 1: ["Q", "W", "F", "P", "B"]   ["J", "L", "U", "Y", "'"]
+Row 2: ["A / GUI", "R / Alt", "S / Ctrl", "T / Shift", "G / tmux"]   ["M / tmux", "N / Shift", "E / Ctrl", "I / Alt", "O / GUI"]
+Row 3: ["Z", "X", "C", "D", "V"]   ["K", "H", ",", ".", "/"]
+Thumbs: ["Esc / Shortcuts", "Space / Brackets", "Tab / Navigation"]   ["Enter / Numbers", "Backspace / Symbols", "Delete / Function"]
+Caption: "Tap for the main label. Hold for the smaller label. Hold G or M for tmux."
+
+SYMBOLS · HOLD BACKSPACE
+Row 1: ["@", "$", "#", "%", "*"]   ["*", "%", "#", "$", "@"]
+Row 2: ["&", "|", "^", "\\", "/"]   ["/", "\\", "^", "|", "&"]
+Row 3: ["~", "+", "-", "_", "?"]   ["?", "_", "-", "+", "~"]
+Thumbs: ["—", "—", "—"]   ["—", "—", "—"]
+
+BRACKETS · HOLD SPACE
+Row 1: ["[", "]", "<", ">", ":"]   [":", "<", ">", "[", "]"]
+Row 2: ["{", "}", "(", ")", ";"]   [";", "(", ")", "{", "}"]
+Row 3: ["`", "'", "\"", "!", "="]   ["=", "!", "\"", "'", "`"]
+Thumbs: ["—", "—", "—"]   ["—", "Del word ←", "Del word →"]
+
+NUMBERS · HOLD ENTER
+Row 1: ["*", "9", "8", "7", "+"]   ["+", "7", "8", "9", "*"]
+Row 2: ["/", "6", "5", "4", "-"]   ["-", "4", "5", "6", "/"]
+Row 3: ["0", "3", "2", "1", "="]   ["=", "1", "2", "3", "0"]
+Thumbs: [",", ".", "Enter"]   ["—", ".", ","]
+
+NAVIGATION · HOLD TAB
+Row 1: ["Undo", "Cut", "Copy", "Paste", "Redo"]   ["Nav back", "Word ←", "Match {}", "Match {}", "Word →"]
+Row 2: ["Home", "PgDn", "PgUp", "End", "Ctrl/⌘ P"]   ["Ctrl/⌘ P", "←", "↓", "↑", "→"]
+Row 3: ["Go to line", "Nav ←", "Nav →", "Switch file", "Palette"]   ["Palette", "Switch file", "Nav →", "Nav ←", "Go to line"]
+Thumbs: ["Select all", "Save", "—"]   ["—", "Del line ←", "Del line →"]
+
+SHORTCUTS · HOLD ESC
+Row 1: ["Screenshot", "Comment", "Replace all", "Find all", "Zoom +"]   ["Zoom +", "Find all", "Replace all", "Comment", "Screenshot"]
+Row 2: ["Snip", "Format", "Replace", "Find", "Zoom −"]   ["Zoom −", "Find", "Replace", "Format", "Snip"]
+Row 3: ["Record", "Definition", "Implement", "Quick fix", "Close tab"]   ["Close tab", "Quick fix", "Implement", "Definition", "Record"]
+Thumbs: ["▽", "▽", "▽"]   ["▽", "▽", "▽"]
+
+TMUX · HOLD G OR M
+Row 1: ["1", "2", "3", "4", "5"]   ["6", "7", "8", "9", "0"]
+Row 2: ["New", "Prev", "Next", "Last", "Tree"]   ["Tree", "←", "↓", "↑", "→"]
+Row 3: ["Split |", "Split —", "Zoom", "Kill", "Rename"]   ["Detach", "Resize ←", "Resize ↓", "Resize ↑", "Resize →"]
+Thumbs: ["▽", "▽", "▽"]   ["▽", "▽", "▽"]
+Caption: "Macros send Ctrl+A, then the command key."
+
+FUNCTION · HOLD DELETE
+Row 1: ["→ PC", "F9", "F8", "F7", "F10"]   ["F10", "F7", "F8", "F9", "→ PC"]
+Row 2: ["→ Mac", "F6", "F5", "F4", "F11"]   ["F11", "F4", "F5", "F6", "→ Mac"]
+Row 3: ["→ Game", "F3", "F2", "F1", "F12"]   ["F12", "F1", "F2", "F3", "→ Game"]
+Thumbs: ["—", "—", "—"]   ["—", "—", "—"]
+
+GAMING · QWERTY
+Row 1: ["Q", "W", "E", "R", "T"]   ["Y", "U", "I", "O", "P"]
+Row 2: ["A", "S", "D", "F", "G"]   ["H", "J", "K", "L", ";"]
+Row 3: ["Z", "X", "C", "V", "B"]   ["N", "M", ",", ".", "/"]
+Thumbs: ["Esc", "Space", "Tab"]   ["Enter", "Backspace", "Delete"]
+Caption: "Plain keys; no hold layers. Exit: reconnect 3w6, or use Totem Bluetooth → PC/Mac."
+
+BLUETOOTH · TOTEM ONLY · HOLD RIGHT OUTER KEY
+Row 1: ["BT0 PC", "BT1 Mac", "BT2", "BT3", "BT4"]   ["▽", "▽", "▽", "▽", "→ PC"]
+Row 2: ["▽", "▽", "▽", "▽", "▽"]   ["▽", "▽", "▽", "▽", "→ Mac"]
+Row 3: ["BT clear", "USB / BT", "Reset", "Bootloader", "▽"]   ["▽", "▽", "▽", "▽", "→ Game"]
+Thumbs: ["▽", "▽", "▽"]   ["▽", "▽", "▽"]
+
+Footer notes, exact text:
+"36-key shared core shown. Totem adds two outer keys beside the bottom letter row: left = Shift (GUI in Gaming); right = Bluetooth."
+"GUI = Windows / Command · ▽ = underlying key · blank = disabled"
+"PC/Mac action positions match; shortcuts use the selected OS bindings. Editor and tmux actions require matching app keybindings."
+
+Constraints: Render key labels accurately and legibly. No invented keys, six-key letter rows, missing thumb keys, hands, props, logos, watermarks, perspectives, or decorative filler. Keep all punctuation legible and distinct, especially slash/backslash, grave/apostrophe/double quote, brackets and braces. Use consistent geometry and typography. This is a precise personal reference, not a conceptual keyboard illustration.

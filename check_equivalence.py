@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""One-time migration check: confirm this merged generator produces the SAME
-effective layout as the two pre-merge generators, by expanding both to concrete
-keycodes and diffing per layer / per position.  Only macro *names* should differ;
-any intentional layout change (e.g. moving a key) shows up here as an expected diff.
+"""Optional migration check: compare this merged generator with the two
+pre-merge generators by expanding both to concrete keycodes per layer / position.
+The one accepted behavior change is moving the Colemak tmux layer holds from
+B/J to the home-row G/M keys. All other layout changes fail this check.
 
 This needs the ORIGINAL per-board generators present.  They are not part of this
-repo — point at them with env vars (defaults match their original clone paths):
+repo — point at them with env vars (defaults look in sibling repository folders):
 
     ZMK_SRC=/path/to/format_keymap.py QMK_SRC=/path/to/generate_keymap.py \\
         python check_equivalence.py
@@ -23,8 +23,9 @@ from pathlib import Path
 from layout import engine, names
 from layout.layers import GRIDS, LAYER_ORDER, TOTEM_ONLY
 
-ORIG_ZMK = Path(os.environ.get("ZMK_SRC", "/home/dev/zmk-config-totem/format_keymap.py"))
-ORIG_QMK = Path(os.environ.get("QMK_SRC", "/home/dev/qmk-config-3w6/generate_keymap.py"))
+SIBLINGS = Path(__file__).resolve().parent.parent
+ORIG_ZMK = Path(os.environ.get("ZMK_SRC", SIBLINGS / "zmk-config-totem/format_keymap.py"))
+ORIG_QMK = Path(os.environ.get("QMK_SRC", SIBLINGS / "qmk-config-3w6/generate_keymap.py"))
 
 
 def _load(path, modname):
@@ -131,6 +132,24 @@ def qmk_new_layers():
 
 # ── diff ──────────────────────────────────────────────────────────────────────
 
+# Exact old/new pairs, restricted to these positions on the two Colemak layers.
+# Do not normalize every tmux binding: that would hide accidental remapping.
+_TMUX_RELOCATION = {
+    "zmk": {
+        4: ("&lt TMUX B", "&kp B"),
+        5: ("&lt TMUX J", "&kp J"),
+        14: ("&kp G", "&lt TMUX G"),
+        15: ("&kp M", "&lt TMUX M"),
+    },
+    "qmk": {
+        4: ("LT(_TMUX, KC_B)", "KC_B"),
+        5: ("LT(_TMUX, KC_J)", "KC_J"),
+        14: ("KC_G", "LT(_TMUX, KC_G)"),
+        15: ("KC_M", "LT(_TMUX, KC_M)"),
+    },
+}
+
+
 def compare(kind, old, new):
     ok = True
     for layer in old:
@@ -139,16 +158,25 @@ def compare(kind, old, new):
             ok = False
             continue
         o, n = old[layer], new[layer]
+        allowed = (_TMUX_RELOCATION[kind]
+                   if layer in {"COLEMAK_PC", "COLEMAK_MAC"} else {})
+        intentional = 0
         if len(o) != len(n):
             print(f"  [{kind}] {layer}: length {len(o)} -> {len(n)}")
             ok = False
         for i, (a, b) in enumerate(zip(o, n)):
             if a != b:
+                if allowed.get(i) == (a, b):
+                    intentional += 1
+                    continue
                 print(f"  [{kind}] {layer}[{i}]: {a!r} != {b!r}")
                 ok = False
+        if intentional:
+            print(f"  [{kind}] {layer}: {intentional} intentional tmux B/J → G/M changes")
     extra = set(new) - set(old)
     if extra:
-        print(f"  [{kind}] new-only layers (expected for Totem): {sorted(extra)}")
+        print(f"  [{kind}] unexpected new layers: {sorted(extra)}")
+        ok = False
     return ok
 
 
@@ -165,7 +193,7 @@ def main():
     ok &= compare("zmk", zmk_old_layers(), zmk_new_layers())
     print("QMK (3w6) equivalence:")
     ok &= compare("qmk", qmk_old_layers(), qmk_new_layers())
-    print("\n" + ("ALL LAYERS MATCH ✓" if ok else "MISMATCH ✗"))
+    print("\n" + ("ALL LAYERS MATCH (including intentional tmux relocation) ✓" if ok else "MISMATCH ✗"))
     return 0 if ok else 1
 
 
