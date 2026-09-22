@@ -24,7 +24,7 @@ targets/
   zmk.py               # ZMK boilerplate: behaviors, macros{} node, keymap wrapper
   qmk.py               # QMK boilerplate: enums, tmux table, RGB/OS-detection code
 totem/ , 3w6/          # self-contained, buildable board configs
-keymap-drawer/         # generated keymap.yaml (visualization definition)
+keymap-drawer/         # cheatsheet image, prompts, and generated layer data
 check_equivalence.py   # optional migration check (needs the pre-merge generators)
 .github/workflows/    # QMK + ZMK builds and generated-layout checks
 ```
@@ -63,42 +63,27 @@ on both Colemak layers, keeping the holds on the home row; all other binding
 differences fail. It needs the original generators (see its file header) and is
 not needed for generation, tests, or firmware builds.
 
-## Visualize the layers
-
-`generate.py draw` writes a [keymap-drawer](https://github.com/caksoylar/keymap-drawer)
-definition to `keymap-drawer/keymap.yaml` (the shared split 3x5+3 core, all layers,
-with tap/hold legends). Render it to SVG:
-
-```sh
-pipx install keymap-drawer          # or: pip install keymap-drawer
-keymap draw keymap-drawer/keymap.yaml > keymap-drawer/keymap.svg
-```
-
-The current render ([`keymap-drawer/keymap.svg`](keymap-drawer/keymap.svg)):
-
-![Keymap layers](keymap-drawer/keymap.svg)
-
-The Totem's two extra outer keys sit beside the **bottom letter row**: Shift on
-the left (GUI in Gaming), hold-for-Bluetooth on the right. They aren't in the
-ortho drawing — noted at the top of the YAML.
-
-### Printable cheatsheet
+## Layout cheatsheet
 
 [`keymap-drawer/cheatsheet.png`](keymap-drawer/cheatsheet.png) is an imagegen-created
 reference for the shared layout, with PC/Mac action panels combined and the
 Totem Bluetooth layer included. The exact generation prompt is saved in
 [`cheatsheet-prompt.txt`](keymap-drawer/cheatsheet-prompt.txt), with its targeted
 correction in [`cheatsheet-edit-prompt.txt`](keymap-drawer/cheatsheet-edit-prompt.txt).
-This image is a snapshot; regenerate it after layout changes. The generated
-YAML/SVG remains the per-layer reference.
+This image is a snapshot; regenerate it after layout changes.
 
 ![Keyboard cheatsheet](keymap-drawer/cheatsheet.png)
+
+`python generate.py draw` also exports the per-layer tap/hold legends to
+[`keymap-drawer/keymap.yaml`](keymap-drawer/keymap.yaml). The image and YAML show
+the shared 36-key core. Totem's extra keys sit beside the **bottom letter row**:
+Shift on the left (GUI in Gaming), hold-for-Bluetooth on the right.
 
 ## Build
 
 ```sh
-cd totem && bash scripts/build-local.sh      # ZMK  (Docker)
-cd 3w6   && ./build.sh                        # QMK  (Docker)
+bash totem/scripts/build-local.sh      # ZMK  (Docker or Podman)
+bash 3w6/build.sh                      # QMK  (Docker)
 ```
 
 The local scripts need Python 3 and Docker (Totem also supports Podman), and can
@@ -148,8 +133,8 @@ This repo unifies the keymaps for two existing keyboards; the board configs unde
 * **3w6 / 3w6 RGB** — 36-key split by **weteor**
   ([hardware](https://github.com/weteor/3w6)); the 3w6 RGB variant is maintained by
   **Keebart**, running [QMK](https://qmk.fm/) (`3w6_rgb`, © 2021 weteor).
-* Layer diagrams via [keymap-drawer](https://github.com/caksoylar/keymap-drawer)
-  by **caksoylar**.
+* Layer data uses the [keymap-drawer](https://github.com/caksoylar/keymap-drawer)
+  format by **caksoylar**.
 
 The layout itself (key placement, home-row mods, layers, tmux/editor macros) is
 my own.
