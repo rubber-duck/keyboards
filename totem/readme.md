@@ -26,8 +26,9 @@ the repository root. `config/totem.keymap` is generated; direct edits will be
 overwritten. See the [main guide](../README.md) for layers and layout checks.
 
 Push the complete `keyboards` repository, then open **Actions → Build ZMK
-firmware**. The [root workflow](../.github/workflows/build-zmk.yml) passes this
-folder's `build.yaml` and `config/` to ZMK's reusable build workflow.
+firmware**. The [root workflow](../.github/workflows/build-zmk.yml) uses the same
+local build script below, with this folder's `build.yaml` and `config/` in an
+isolated workspace. This supports the nested configuration directory.
 
 Download the **totem-firmware** artifact from a successful run and unzip it.
 

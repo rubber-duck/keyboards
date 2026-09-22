@@ -9,8 +9,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
@@ -20,11 +21,13 @@ jobs:
         run: python generate.py all --check
       - name: Test layout checks
         run: python -m unittest discover -s tests
-
-  build:
-    needs: validate
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-    with:
-      build_matrix_path: totem/build.yaml
-      config_path: totem/config
-      archive_name: totem-firmware
+      # The upstream reusable workflow assumes the config's parent is the repo
+      # root. Use our isolated workspace for the nested totem/config directory.
+      - name: Build both Totem halves
+        run: bash totem/scripts/build-local.sh
+      - name: Archive firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: totem-firmware
+          if-no-files-found: error
+          path: totem/firmware/*.uf2

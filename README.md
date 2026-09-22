@@ -110,8 +110,9 @@ GitHub Actions workflows live at the repository root:
 
 * [Build QMK firmware](.github/workflows/build-qmk.yml) builds 3w6 and uploads
   `3w6-firmware` containing `3w6_rgb_default.uf2`.
-* [Build ZMK firmware](.github/workflows/build-zmk.yml) reads `totem/build.yaml`
-  and `totem/config`, builds both halves, and uploads `totem-firmware` containing
+* [Build ZMK firmware](.github/workflows/build-zmk.yml) uses the local build script
+  with `totem/build.yaml` and `totem/config`, builds both halves in an isolated
+  workspace, and uploads `totem-firmware` containing
   `totem_left-xiao_ble-zmk.uf2` and `totem_right-xiao_ble-zmk.uf2`.
 
 Both run on pushes, pull requests, and manual dispatch, and check generated files
